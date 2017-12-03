@@ -4,8 +4,31 @@ from motor import getMotors, turnOffMotors, moveForward, moveBackward, turnLeftI
 
 import atexit
 
+from SimpleWebSocketServer import WebSocket, SimpleWebSocketServer, SimpleSSLWebSocketServer
+
 leftMotors = []
 rightMotors = []
+
+maxSpeed = 50
+turnSpeed = 50
+
+class SocketReceiver(WebSocket):
+    def handleMessage(self):
+        print(self.data)
+        if (self.data == "w"):
+            moveForward(leftMotors, rightMotors, maxSpeed)
+        elif (self.data == "s"):
+            moveBackward(leftMotors, rightMotors, maxSpeed)
+        elif (self.data == "a"):
+            turnLeftInPlace(leftMotors, rightMotors, turnSpeed)
+        elif (self.data == "d"):
+            turnRightInPlace(leftMotors, rightMotors, turnSpeed)
+
+    def handleConnected(self):
+        print (self.address, 'connected')
+
+    def handleClose(self):
+        print (self.address, 'closed')
 
 def main():
     atexit.register(turnOffMotors)
@@ -14,20 +37,12 @@ def main():
     leftMotors.extend(lMotors)
     rightMotors.extend(rMotors)
 
-    maxSpeed = 70
-    turnSpeed = 100
+    #turnOffMotors()
 
-    print("move forward")
-    moveForward(leftMotors, rightMotors, maxSpeed)
+    cls = SocketReceiver
+    server = SimpleWebSocketServer('0.0.0.0', 8000, cls)
+    server.serveforever()
 
-    print("turn left")
-    turnLeftInPlace(leftMotors, rightMotors, turnSpeed)
-
-    print("turn right")
-    turnRightInPlace(leftMotors, rightMotors, turnSpeed)
-
-    print("move backwards")
-    moveBackward(leftMotors, rightMotors, maxSpeed)
 
 if __name__ == '__main__':
     main()
