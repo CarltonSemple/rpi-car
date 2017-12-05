@@ -26,13 +26,13 @@ def accelerateToSpeed(leftMotors, rightMotors, targetSpeed):
 	for i in range(targetSpeed):
 		motorsSetSpeed(leftMotors,i)
 		motorsSetSpeed(rightMotors,i)		
-		time.sleep(0.01)
+		time.sleep(0.001)
 
 def decelerateFromSpeed(leftMotors, rightMotors, startSpeed):
 	for i in range(startSpeed,0,-1): # decrease
 		motorsSetSpeed(leftMotors,i)
 		motorsSetSpeed(rightMotors,i)		
-		time.sleep(0.01)
+		time.sleep(0.001)
 
 def moveForward(leftMotors, rightMotors, maxSpeed):
 	motorsSetDirection(leftMotors,Adafruit_MotorHAT.FORWARD)
