@@ -1,5 +1,6 @@
 #!/usr/bin/python
 from Adafruit_MotorHAT import Adafruit_MotorHAT, Adafruit_DCMotor
+import RPi.GPIO as GPIO
  
 import time
 import atexit
@@ -71,3 +72,41 @@ def getMotors():
 		cMotor.setSpeed(150)
 		rightMotors.append(cMotor)
 	return leftMotors, rightMotors
+
+current_motor_num = 1
+encoder_pin_nums = {}
+
+def motor_calib_rising_callback(gpio_pin):
+    #print(gpio_pin)
+    encoder_pin_nums[gpio_pin] = current_motor_num
+
+# note: wheels must be free for this, so car must be upside or suspended in the air
+def get_motor_number_for_encoder_pin(encoder_pin_1, encoder_pin_2, encoder_pin_3, encoder_pin_4):
+    global current_motor_num
+    global encoder_pin_nums
+    encoder_pin_nums[encoder_pin_1] = 0
+    encoder_pin_nums[encoder_pin_2] = 0
+    encoder_pin_nums[encoder_pin_3] = 0
+    encoder_pin_nums[encoder_pin_4] = 0
+    for key, value in encoder_pin_nums.items():
+        GPIO.setup(key, GPIO.IN)
+        GPIO.add_event_detect(key, GPIO.RISING, callback=motor_calib_rising_callback)
+
+    for m in range(1, 5):
+        motor = mh.getMotor(m)
+        current_motor_num = m
+        motor.run(Adafruit_MotorHAT.FORWARD)
+        target_speed = 100
+        for i in range(target_speed):
+            motor.setSpeed(i)
+            time.sleep(0.001)
+        for i in range(target_speed,0,-1): # decrease
+            motor.setSpeed(i)		
+            time.sleep(0.001)
+        time.sleep(1)
+    for m in range(1, 5):
+        mh.getMotor(m).run(Adafruit_MotorHAT.RELEASE)
+    #print('calibration finished')
+    #print(json.dumps(encoder_pin_nums))
+    return encoder_pin_nums
+    
