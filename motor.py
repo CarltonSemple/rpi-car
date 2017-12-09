@@ -23,13 +23,13 @@ def motorsSetDirection(motors, direction):
 	for i in range(len(motors)):
 		motors[i].run(direction)
 
-def accelerateToSpeed(leftMotors, rightMotors, targetSpeed): 
-	for i in range(targetSpeed):
+def accelerateToSpeed(startSpeed, targetSpeed, leftMotors, rightMotors): 
+	for i in range(startSpeed, targetSpeed):
 		motorsSetSpeed(leftMotors,i)
 		motorsSetSpeed(rightMotors,i)		
 		time.sleep(0.001)
 
-def decelerateFromSpeed(leftMotors, rightMotors, startSpeed):
+def decelerateFromSpeed(startSpeed, targetSpeed, leftMotors, rightMotors):
 	for i in range(startSpeed,0,-1): # decrease
 		motorsSetSpeed(leftMotors,i)
 		motorsSetSpeed(rightMotors,i)		
@@ -38,26 +38,26 @@ def decelerateFromSpeed(leftMotors, rightMotors, startSpeed):
 def moveForward(leftMotors, rightMotors, maxSpeed):
 	motorsSetDirection(leftMotors,Adafruit_MotorHAT.FORWARD)
 	motorsSetDirection(rightMotors,Adafruit_MotorHAT.BACKWARD)
-	accelerateToSpeed(leftMotors, rightMotors, maxSpeed)
-	decelerateFromSpeed(leftMotors, rightMotors, maxSpeed)
+	accelerateToSpeed(0, maxSpeed, leftMotors, rightMotors)
+	decelerateFromSpeed(maxSpeed, 0, leftMotors, rightMotors)
 
 def moveBackward(leftMotors, rightMotors, maxSpeed):
 	motorsSetDirection(leftMotors,Adafruit_MotorHAT.BACKWARD)
 	motorsSetDirection(rightMotors,Adafruit_MotorHAT.FORWARD)
-	accelerateToSpeed(leftMotors, rightMotors, maxSpeed)
-	decelerateFromSpeed(leftMotors, rightMotors, maxSpeed)
+	accelerateToSpeed(0, maxSpeed, leftMotors, rightMotors)
+	decelerateFromSpeed(maxSpeed, 0, leftMotors, rightMotors)
 
 def turnLeftInPlace(leftMotors, rightMotors, maxSpeed):
 	motorsSetDirection(leftMotors,Adafruit_MotorHAT.BACKWARD)
 	motorsSetDirection(rightMotors,Adafruit_MotorHAT.BACKWARD)
-	accelerateToSpeed(leftMotors, rightMotors, maxSpeed)
-	decelerateFromSpeed(leftMotors, rightMotors, maxSpeed)
+	accelerateToSpeed(0, maxSpeed, leftMotors, rightMotors)
+	decelerateFromSpeed(maxSpeed, 0, leftMotors, rightMotors)
 
 def turnRightInPlace(leftMotors, rightMotors, maxSpeed):
 	motorsSetDirection(leftMotors,Adafruit_MotorHAT.FORWARD)
 	motorsSetDirection(rightMotors,Adafruit_MotorHAT.FORWARD)
-	accelerateToSpeed(leftMotors, rightMotors, maxSpeed)
-	decelerateFromSpeed(leftMotors, rightMotors, maxSpeed)
+	accelerateToSpeed(0, maxSpeed, leftMotors, rightMotors)
+	decelerateFromSpeed(maxSpeed, 0, leftMotors, rightMotors)
 
 def getMotors():
 	leftMotors = []
