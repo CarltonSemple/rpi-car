@@ -45,20 +45,24 @@ def handle_motor_command(command):
     else:
         print('invalid motor command')
 
-def start_recording():
+def start_recording_encoder_movement(filename):
     print('start recording - not implemented')
 
-def stop_recording():
+def stop_recording_encoder_movement(filename):
     print('stop recording - not implemented')
 
 def is_record_command(command):
     return command['command_type'] == 'record_begin' or command['command_type'] == 'record_stop'
 
 def handle_record_command(command):
+    if ('filename' not in command):
+        print('no filename given')
+        return -1 # todo - throw an error...
+
     if (command['command_type'] == 'record_begin'):
-        start_recording()
+        start_recording_encoder_movement(command['filename'])
     elif (command['command_type'] == 'record_stop'):
-        stop_recording()
+        stop_recording_encoder_movement(command['filename'])
     else:
         print('invalid record command')
 
@@ -94,7 +98,7 @@ def main():
     #turnOffMotors()
 
     executor = Thread(target=motorFunctionExecutor)
-    #executor.daemon = True
+    executor.daemon = True
     executor.start()
 
     cls = CarCommandReceiver
