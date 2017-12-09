@@ -2,6 +2,7 @@ import RPi.GPIO as GPIO
 import datetime
 import time
 import json
+import os
 
 from util import save_dictionary_to_csv
 
@@ -9,7 +10,11 @@ def finish_encoder_motion_recording(filename):
     global _record_now
     _record_now = False
     print(json.dumps(_motor_movement_events))
-    save_dictionary_to_csv(_motor_movement_events, filename)
+
+    recording_dir = './saved_recordings'
+    if os.path.isdir(recording_dir) is not True:
+        os.mkdir(recording_dir)
+    save_dictionary_to_csv(_motor_movement_events, recording_dir+'/'+filename)
 
 def record_encoder_motion(encoder_pins_mapped_to_motor_nums):
     global _encoder_pins_motor_nums

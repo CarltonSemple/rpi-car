@@ -4,11 +4,12 @@ import json
 dictionary: keys are arrays
 '''
 def save_dictionary_to_csv(dictionary, filepath):
+    line_arrays = [[]]
+    for i in range(_get_longest_array_length(dictionary)):
+        line_arrays.append([])
+    if len(line_arrays) == 1:
+        return
     with open(filepath, 'wb') as file:
-        line_arrays = [[]]
-        for i in range(_get_longest_array_length(dictionary)):
-            line_arrays.append([])
-
         for key,array in dictionary.items():
             for line_index in range(len(array)):
                 line_arrays[line_index].append(array[line_index])
