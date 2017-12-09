@@ -1,8 +1,10 @@
 import RPi.GPIO as GPIO
 import motor
+from record import record_encoder_motion, finish_encoder_motion_recording
 
 import time
 import json
+import threading
 
 count = 0
 
@@ -17,9 +19,26 @@ def rising_callback(channel):
     count = count + 1
 
 def main():    
+    print('suspend wheels in the air...')
+    time.sleep(5)
+    print('starting')
     GPIO.setmode(GPIO.BCM)
-    print(json.dumps(motor.get_motor_number_for_encoder_pin(4,18,13,19)))
-    
+    encoder_pins_motor_nums = motor.get_motor_number_for_encoder_pin(4,18,13,19)
+    print(json.dumps(encoder_pins_motor_nums))
+
+    time.sleep(3)
+
+    print('beginning to record motion')
+
+    t = threading.Thread(target=record_encoder_motion, args=(encoder_pins_motor_nums, 'test.csv'))
+    t.daemon = True
+    t.start()
+
+    time.sleep(10)
+
+    print('stopping motion recording')
+    finish_encoder_motion_recording()
+
     '''GPIO.setup(20, GPIO.IN)
     print(GPIO.input(20))
     GPIO.add_event_detect(20, GPIO.BOTH, callback=rising_callback)

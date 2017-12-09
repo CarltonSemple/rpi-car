@@ -80,7 +80,14 @@ def motor_calib_rising_callback(gpio_pin):
     #print(gpio_pin)
     encoder_pin_nums[gpio_pin] = current_motor_num
 
-# note: wheels must be free for this, so car must be upside or suspended in the air
+'''
+note: wheels must be free for this, so car must be upside-down or suspended in the air
+Returns a dictionary of encoder pins #s and motor #s, as visualized with the JSON:
+{
+	encoder_# : motor_#,
+	encoder_# : motor_#
+}
+'''
 def get_motor_number_for_encoder_pin(encoder_pin_1, encoder_pin_2, encoder_pin_3, encoder_pin_4):
     global current_motor_num
     global encoder_pin_nums
@@ -109,4 +116,3 @@ def get_motor_number_for_encoder_pin(encoder_pin_1, encoder_pin_2, encoder_pin_3
     #print('calibration finished')
     #print(json.dumps(encoder_pin_nums))
     return encoder_pin_nums
-    
