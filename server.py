@@ -28,25 +28,54 @@ def motorFunctionExecutor():
         else:
             time.sleep(0.01)
 
-class MotorCommandReceiver(WebSocket):
+def is_motor_command(command):
+    return command['command_type'] == 'turn' or command['command_type'] == 'move'
+
+def handle_motor_command(command):
+    if (command['command_type'] == 'turn'):
+        if command['turnDirection'] == 'left':
+            motorFunctionQueue.append(turnLeftInPlace(leftMotors, rightMotors, command['speed']))
+        elif command['turnDirection'] == 'right':
+            motorFunctionQueue.append(turnRightInPlace(leftMotors, rightMotors, command['speed']))
+    elif (command['command_type'] == 'move'):
+        if command['moveDirection'] == 'forward':
+            motorFunctionQueue.append(moveForward(leftMotors, rightMotors, command['speed']))
+        elif command['moveDirection'] == 'backward':
+            motorFunctionQueue.append(moveBackward(leftMotors, rightMotors, command['speed']))
+    else:
+        print('invalid motor command')
+
+def start_recording():
+    print('start recording - not implemented')
+
+def stop_recording():
+    print('stop recording - not implemented')
+
+def is_record_command(command):
+    return command['command_type'] == 'record_begin' or command['command_type'] == 'record_stop'
+
+def handle_record_command(command):
+    if (command['command_type'] == 'record_begin'):
+        start_recording()
+    elif (command['command_type'] == 'record_stop'):
+        stop_recording()
+    else:
+        print('invalid record command')
+
+
+class CarCommandReceiver(WebSocket):
     def handleMessage(self):
-        print("received:")
+        print('received:')
         print(self.data)
         #self.sendMessage(self.data)
 
         command = json.loads(self.data)
 
-        if (command['turn']):
-            if command['turnDirection'] == "left":
-                motorFunctionQueue.append(turnLeftInPlace(leftMotors, rightMotors, command['speed']))
-            elif command['turnDirection'] == "right":
-                motorFunctionQueue.append(turnRightInPlace(leftMotors, rightMotors, command['speed']))
-        else:
-            if command['moveDirection'] == "forward":
-                motorFunctionQueue.append(moveForward(leftMotors, rightMotors, command['speed']))
-            elif command['moveDirection'] == "backward":
-                motorFunctionQueue.append(moveBackward(leftMotors, rightMotors, command['speed']))
-
+        if (is_motor_command(command)):
+            handle_motor_command(command)
+        elif (is_record_command(command)):
+            handle_record_command(command)
+            
         self.sendMessage('ok')
 
     def handleConnected(self):
@@ -68,7 +97,7 @@ def main():
     #executor.daemon = True
     executor.start()
 
-    cls = MotorCommandReceiver
+    cls = CarCommandReceiver
     server = SimpleWebSocketServer('0.0.0.0', 8000, cls)
     server.serveforever()
 
