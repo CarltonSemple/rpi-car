@@ -1,6 +1,6 @@
 import RPi.GPIO as GPIO
 import motor
-from record import record_encoder_motion, finish_encoder_motion_recording
+from record import record_encoder_motion, finish_encoder_motion_recording, record_encoder_movements_per_speed
 
 import time
 import json
@@ -39,6 +39,9 @@ def main():
 
     print('stopping motion recording')
     finish_encoder_motion_recording(filename)
+
+    print('recording movements per speed')
+    record_encoder_movements_per_speed(4, encoder_pins_motor_nums[4])
 
     '''GPIO.setup(20, GPIO.IN)
     print(GPIO.input(20))
