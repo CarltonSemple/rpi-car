@@ -59,6 +59,9 @@ def turnRightInPlace(leftMotors, rightMotors, maxSpeed):
 	accelerateToSpeed(0, maxSpeed, leftMotors, rightMotors)
 	decelerateFromSpeed(maxSpeed, 0, leftMotors, rightMotors)
 
+def getMotor(motor_number):
+	return mh.getMotor(motor_number)
+
 def getMotors():
 	leftMotors = []
 	rightMotors = []
