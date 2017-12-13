@@ -20,7 +20,7 @@ def save_dictionary_to_csv(dictionary, filepath):
 
         for line_index in range(len(line_arrays)):
             file.write(bytes(_array_to_csv_line(line_arrays[line_index]), 'UTF-8'))
-            file.write(bytes('\n', 'UTF-8'))
+            file.write(bytes('\n', 'UTF-8'))    
 
 def _get_longest_array_length(arrays_dictionary):
     longest = 0

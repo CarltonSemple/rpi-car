@@ -16,7 +16,7 @@ def finish_encoder_motion_recording(filename):
     recording_dir = './saved_encoder_recordings'
     if os.path.isdir(recording_dir) is not True:
         os.mkdir(recording_dir)
-    save_dictionary_to_csv(_motor_movement_events, recording_dir+'/'+filename)
+    save_dictionary_to_csv(_motor_movement_events, recording_dir+'/motion_'+filename)
 
 def record_encoder_motion(encoder_pins_mapped_to_motor_nums):
     global _encoder_pins_motor_nums
@@ -35,10 +35,28 @@ def record_encoder_motion(encoder_pins_mapped_to_motor_nums):
     while _record_now:
         time.sleep(1)
 
+
+def finish_encoder_movements_per_speed_recording(recording_name):
+    global _record_now
+    _record_now = False
+    if len(_movements_per_speed) == 0:
+        print('no speed values to save')
+        return
+    print(json.dumps(_movements_per_speed))
+
+    recording_dir = './saved_encoder_recordings'
+    if os.path.isdir(recording_dir) is not True:
+        os.mkdir(recording_dir)
+    with open(recording_dir+'/speed_'+recording_name+'.csv', 'wb') as file:
+        for line_index in range(len(_movements_per_speed)):
+            line_txt = str(line_index) + ',' + str(_movements_per_speed[line_index])
+            file.write(bytes(line_txt, 'UTF-8'))
+            file.write(bytes('\n', 'UTF-8'))
+
 '''
 Iterates through all of the speeds, 0-255, recording the average encoder activations per
 '''
-def record_encoder_movements_per_speed(encoder_gpio_pin, motor_number):
+def record_encoder_movements_per_speed(encoder_gpio_pin, motor_number, seconds_per_speed):
     global _speed
     global _recording_motor_number
     global _movements_per_speed
@@ -61,7 +79,7 @@ def record_encoder_movements_per_speed(encoder_gpio_pin, motor_number):
         print('speed: ', _speed)
         print(json.dumps(_movements_per_speed))
         accelerateToSpeed(_speed, _speed + 1, [getMotor(motor_number)], [])
-        time.sleep(15)
+        time.sleep(seconds_per_speed)
     print('finishing up')
     decelerateFromSpeed(_speed, 0, [getMotor(motor_number)], [])
     getMotor(motor_number).run(Adafruit_MotorHAT.RELEASE)
