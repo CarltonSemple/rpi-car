@@ -1,6 +1,7 @@
 import RPi.GPIO as GPIO
 import motor
-from record import record_encoder_motion, finish_encoder_motion_recording, record_encoder_movements_per_speed
+from record import record_encoder_motion, finish_encoder_motion_recording, record_encoder_movements_per_speed, finish_encoder_movements_per_speed_recording
+from ultrasonic import setup_ultrasonic_pin, send_ultrasonic_pulse
 
 import time
 import json
@@ -18,7 +19,16 @@ def rising_callback(channel):
     print('Rising edge {} detected on channel {}'.format(count, channel))
     count = count + 1
 
-def main():    
+def main():
+    GPIO.setmode(GPIO.BCM)
+    ultrasonic_pin = 23
+    setup_ultrasonic_pin(ultrasonic_pin)
+    while True:
+        send_ultrasonic_pulse(ultrasonic_pin)
+        time.sleep(1)
+    print('finishing')
+
+    '''
     print('suspend wheels in the air...')
     time.sleep(5)
     print('starting calibration')
@@ -41,7 +51,10 @@ def main():
     finish_encoder_motion_recording(filename)
 
     print('recording movements per speed')
-    record_encoder_movements_per_speed(4, encoder_pins_motor_nums[4])
+    speed_motor_encoder = 13
+    record_encoder_movements_per_speed(speed_motor_encoder, encoder_pins_motor_nums[speed_motor_encoder], 20)
+    finish_encoder_movements_per_speed_recording('test')
+    '''
 
     '''GPIO.setup(20, GPIO.IN)
     print(GPIO.input(20))
