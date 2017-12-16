@@ -34,6 +34,7 @@ def record_encoder_motion(encoder_pins_mapped_to_motor_nums):
     _record_now = True
     while _record_now:
         time.sleep(1)
+    print('exiting record_encoder_motion')
 
 
 def finish_encoder_movements_per_speed_recording(recording_name):
@@ -102,14 +103,15 @@ def _callback_record_encoder_movements_per_speed(encoder_gpio_pin):
     _movements_per_speed[_speed] = _movements_per_speed[_speed] + 1
 
 def _callback_record_encoder_motion(encoder_gpio_pin):
+    #print('_callback_record_encoder_motion')
     global _motor_movement_events
     #print(encoder_gpio_pin)
-    motor_number = _encoder_pins_motor_nums[encoder_gpio_pin]
+    motor_number = _encoder_pins_motor_nums[str(encoder_gpio_pin)]
     #print(motor_number)
     _motor_movement_events[motor_number].append(str(datetime.datetime.now()))
 
 def _setup_encoder_pins_with_callback(encoder_pins_as_keys_map):
     for key, value in encoder_pins_as_keys_map.items():
-        GPIO.setup(key, GPIO.IN)
-        GPIO.remove_event_detect(key)
-        GPIO.add_event_detect(key, GPIO.RISING, callback=_callback_record_encoder_motion)
+        GPIO.setup(int(key), GPIO.IN)
+        GPIO.remove_event_detect(int(key))
+        GPIO.add_event_detect(int(key), GPIO.RISING, callback=_callback_record_encoder_motion)
