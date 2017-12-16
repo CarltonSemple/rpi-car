@@ -2,7 +2,7 @@ import RPi.GPIO as GPIO
 import motor
 from record import record_encoder_motion, finish_encoder_motion_recording, record_encoder_movements_per_speed, finish_encoder_movements_per_speed_recording
 from ultrasonic import setup_ultrasonic_pin, send_ultrasonic_pulse, get_detected_edge_arrays
-from util import save_2d_array_to_csv
+from util import save_2d_array_to_csv, save_json_to_file, json_file_to_dictionary
 
 import time
 import json
@@ -21,7 +21,7 @@ def rising_callback(channel):
     count = count + 1
 
 def main():
-    GPIO.setmode(GPIO.BCM)
+    '''GPIO.setmode(GPIO.BCM)
     ultrasonic_pin = 23
     setup_ultrasonic_pin(ultrasonic_pin)
     for i in range(10):
@@ -32,6 +32,7 @@ def main():
     print(json.dumps(edge_sets))
     save_2d_array_to_csv(edge_sets, 'saved_ultrasonic_recordings', 'test')
     print('finishing')
+    '''
 
     '''
     print('suspend wheels in the air...')
@@ -41,7 +42,13 @@ def main():
     encoder_pins_motor_nums = motor.get_motor_number_for_encoder_pin(4,18,13,19)
     print(json.dumps(encoder_pins_motor_nums))
     print('calibration finished')
+    save_json_to_file(json.dumps(encoder_pins_motor_nums), './config', 'encoder_pins_to_motors.json', True)
     time.sleep(3)
+    print('loading json from file')
+    print(json.dumps(json_file_to_dictionary('./config', 'encoder_pins_to_motors.json')))
+    '''
+
+    '''
 
     print('beginning to record motion')
 

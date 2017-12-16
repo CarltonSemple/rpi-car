@@ -1,6 +1,20 @@
 import json
 import os
 
+def save_json_to_file(json_string, directory, filename, overwrite_file):
+    mode = 'a'
+    if overwrite_file is True:
+        mode = 'w'
+    if os.path.isdir(directory) is not True:
+        os.mkdir(directory)
+    file = open(directory+'/'+filename, mode)
+    file.write(json_string)
+    file.close()    
+
+def json_file_to_dictionary(directory, filename):
+    file = open(directory + '/' + filename, 'r')
+    return json.loads(file.read())
+
 def save_2d_array_to_csv(double_array, directory, filename):
     if os.path.isdir(directory) is not True:
         os.mkdir(directory)
