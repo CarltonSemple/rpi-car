@@ -11,6 +11,21 @@ _valid = True
 _arrays_of_edges = [] # array that contains each set (array) of detected edges per pulse
 #_pulse_send_times = []
 
+def reset_ultrasonic_vars():
+    global _ready_to_send_pulse
+    global _start_time
+    global _send_count
+    global _receive_count
+    global _valid
+    global _arrays_of_edges
+
+    _ready_to_send_pulse = True
+    _start_time = 0
+    _send_count = 0
+    _receive_count = 0
+    _valid = True
+    _arrays_of_edges = []
+
 
 def setup_ultrasonic_pin(ultrasonic_pin_number):
     GPIO.setup(ultrasonic_pin_number, GPIO.IN)
@@ -45,7 +60,8 @@ def send_ultrasonic_pulse(ultrasonic_pin_number):
     _start_time = datetime.datetime.now() #time.time()
     _arrays_of_edges.append([str(_unix_time_millis(_start_time))])
     _valid = True
-    print('sent ', _send_count)
+    #print('sent ', _send_count)
+    
     #print('_start_time: ', _start_time)
     '''GPIO.setup(ultrasonic_pin_number, GPIO.IN)
     GPIO.remove_event_detect(ultrasonic_pin_number)
