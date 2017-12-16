@@ -1,7 +1,8 @@
 import RPi.GPIO as GPIO
 import motor
 from record import record_encoder_motion, finish_encoder_motion_recording, record_encoder_movements_per_speed, finish_encoder_movements_per_speed_recording
-from ultrasonic import setup_ultrasonic_pin, send_ultrasonic_pulse
+from ultrasonic import setup_ultrasonic_pin, send_ultrasonic_pulse, get_detected_edge_arrays
+from util import save_2d_array_to_csv
 
 import time
 import json
@@ -23,9 +24,13 @@ def main():
     GPIO.setmode(GPIO.BCM)
     ultrasonic_pin = 23
     setup_ultrasonic_pin(ultrasonic_pin)
-    while True:
+    for i in range(10):
         send_ultrasonic_pulse(ultrasonic_pin)
         time.sleep(1)
+    
+    edge_sets = get_detected_edge_arrays()
+    print(json.dumps(edge_sets))
+    save_2d_array_to_csv(edge_sets, 'saved_ultrasonic_recordings', 'test')
     print('finishing')
 
     '''

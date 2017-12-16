@@ -1,4 +1,15 @@
 import json
+import os
+
+def save_2d_array_to_csv(double_array, directory, filename):
+    if os.path.isdir(directory) is not True:
+        os.mkdir(directory)
+    with open(directory+'/'+filename+'.csv', 'wb') as file:
+        for line_index in range(len(double_array)):
+            s = ','
+            line_txt = s.join(double_array[line_index])
+            file.write(bytes(line_txt, 'UTF-8'))
+            file.write(bytes('\n', 'UTF-8'))
 
 '''
 dictionary: keys are arrays

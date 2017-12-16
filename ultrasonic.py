@@ -8,17 +8,25 @@ _send_count = 0
 _receive_count = 0
 _valid = True
 
+_arrays_of_edges = [] # array that contains each set (array) of detected edges per pulse
+#_pulse_send_times = []
+
 
 def setup_ultrasonic_pin(ultrasonic_pin_number):
     GPIO.setup(ultrasonic_pin_number, GPIO.IN)
     GPIO.remove_event_detect(ultrasonic_pin_number)
     GPIO.add_event_detect(ultrasonic_pin_number, GPIO.BOTH, callback=_callback_falling)
 
+def get_detected_edge_arrays():
+    collection = _arrays_of_edges
+    return collection
+
 def send_ultrasonic_pulse(ultrasonic_pin_number):
     global _ready_to_send_pulse
     global _start_time
     global _send_count
     global _valid
+    global _arrays_of_edges
     if _ready_to_send_pulse is not True:
         print('cannot send pulse')
         return
@@ -35,6 +43,7 @@ def send_ultrasonic_pulse(ultrasonic_pin_number):
     time.sleep(.000002)
     GPIO.setup(ultrasonic_pin_number, GPIO.IN)
     _start_time = datetime.datetime.now() #time.time()
+    _arrays_of_edges.append([str(_unix_time_millis(_start_time))])
     _valid = True
     print('sent ', _send_count)
     #print('_start_time: ', _start_time)
@@ -47,8 +56,6 @@ def send_ultrasonic_pulse(ultrasonic_pin_number):
 speed of sound: 343 meters/second
 34300 centimeters
 '''
-
-_edges = []
 
 '''
 to be set to activate on the high signal
@@ -71,11 +78,12 @@ def _callback_falling(ultrasonic_gpio_pin):
     cm = (34500 * seconds)
     print(cm, _receive_count)
     '''
+    present = datetime.datetime.now()
     if _valid is True:
         _ready_to_send_pulse = True
-        present = datetime.datetime.now()
         difference = (present - _start_time).total_seconds() * 1000000.0
         difference = (difference / 58.0) + 7
+        _arrays_of_edges[_send_count-1].append(str(difference))
         print(difference, ' cm')
         #print(str(datetime.datetime.now()), 'falling')
 
